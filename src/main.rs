@@ -23,12 +23,13 @@ async fn main() {
     let context_filter = warp::any().map(move || Context { /* 初期化 */ }).boxed();
 
     let graphql_route = warp::path("api")
+        .and(warp::post())
         .and(make_graphql_filter(schema, context_filter));
 
     let redirect_route = warp::path!("r" / String)
         .and_then(handlers::redirect::redirect_short_url);
 
-    let routes = graphql_route.or(redirect_route);
+    let routes = graphql_route.or(redirect_route).recover(handlers::rejection::handle_rejection);
 
     warp::serve(routes).run(([0, 0, 0, 0], 3030)).await;
 }
