@@ -9,3 +9,10 @@ edition = "2021"
 warp = "0.3.6"
 tokio = { version = "1", features = ["full"] }
 sqlx = "0.7.2"
+juniper = "0.15.11"
+juniper_warp = "0.7"
+serde = { version = "1.0.192", features = ["derive"] }
+serde_json = "1.0.108"
+dotenv = "0.15.0"
+log = "0.4.20"
+env_logger = "0.10.1"

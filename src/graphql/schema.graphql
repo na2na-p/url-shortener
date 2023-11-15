@@ -1,0 +1,25 @@
+type Query {
+    getShortenedUrl(shortCode: String!): ShortenedUrl
+}
+
+type Mutation {
+    createShortenedUrl(originalUrl: String!, customShortCode: String, expiryPeriod: ExpiryPeriod): ShortenedUrl
+}
+
+type ShortenedUrl {
+    id: ID!
+    originalUrl: String!
+    shortCode: String!
+    customShortCode: String
+    expiryPeriod: ExpiryPeriod
+    createdAt: String!
+    expiresAt: String
+}
+
+enum ExpiryPeriod {
+    ONE_HOUR
+    TWENTY_FOUR_HOURS
+    SEVEN_DAYS
+    THIRTY_DAYS
+    UNLIMITED
+}
