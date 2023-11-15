@@ -8,6 +8,8 @@ use crate::graphql::schema::create_schema;
 mod graphql;
 mod context;
 mod handlers;
+mod dao;
+mod models;
 
 // カスタムリジェクションの定義
 #[derive(Debug)]

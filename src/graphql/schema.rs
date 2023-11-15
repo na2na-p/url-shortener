@@ -1,4 +1,4 @@
-use juniper::{EmptyMutation, EmptySubscription, RootNode};
+use juniper::{EmptySubscription, RootNode};
 
 use crate::context::Context;
 use crate::graphql::types::mutation::Mutation;
