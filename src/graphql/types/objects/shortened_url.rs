@@ -8,10 +8,14 @@ pub struct ShortenedUrl {
     pub id: String,
     pub original_url: String,
     pub short_code: String,
-    pub custom_short_code: Option<String>,
     pub expiry_period: ExpiryPeriod,
     pub created_at: String,
     pub expires_at: Option<String>,
 }
 
-// ここに `ShortenedUrl` 関連のリゾルバーなどがあれば、それを追加
+#[derive(GraphQLObject)]
+#[graphql(description = "A shortened URL")]
+pub struct CreateShortenedUrlResponse {
+    pub shortened_url: ShortenedUrl,
+    pub message: Option<String>
+}

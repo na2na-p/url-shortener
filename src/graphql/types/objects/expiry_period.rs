@@ -1,6 +1,7 @@
 use juniper::GraphQLEnum;
+use serde_derive::{Deserialize, Serialize};
 
-#[derive(GraphQLEnum, Debug, Clone, Copy)]
+#[derive(GraphQLEnum, Serialize, Deserialize, Debug, Clone, Copy)]
 pub enum ExpiryPeriod {
     OneHour,
     TwentyFourHours,

@@ -11,14 +11,17 @@
 #}
 mutation mut {
     createShortenedUrl(
-        originalUrl: "https://www.google.com",
+        originalUrl: "https://www.google.co.jp",
+        customShortCode: "google",
     ) {
-        id
-        originalUrl
-        shortCode
-        customShortCode
-        expiryPeriod
-        createdAt
-        expiresAt
+        shortenedUrl {
+            id
+            originalUrl
+            shortCode
+            expiryPeriod
+            createdAt
+            expiresAt
+        }
+        message
     }
 }
