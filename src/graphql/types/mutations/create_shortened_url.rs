@@ -33,7 +33,9 @@ pub async fn create_shortened_url(
         short_code,
         expiry_period: expiry_period.unwrap_or(ExpiryPeriod::Unlimited),
         created_at: chrono::Utc::now(),
-        expires_at: None,
+        expires_at: expiry_period
+            .unwrap_or(ExpiryPeriod::Unlimited)
+            .calculate_expires_at(),
     };
 
     let insert_result = dao.create_shortened_url(&new_shortened_url).await?;

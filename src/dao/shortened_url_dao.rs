@@ -1,9 +1,10 @@
+use juniper::futures::TryStreamExt;
 use mongodb::{bson::doc, Collection};
 use mongodb::results::InsertOneResult;
 
 use crate::models::shortened_url::ShortenedUrl as ModelShortenedUrl;
 
-#[derive(Clone)] // Clone トレイトを追加
+#[derive(Clone)]
 pub struct ShortenedUrlDao {
     collection: Collection<ModelShortenedUrl>,
 }
@@ -20,5 +21,14 @@ impl ShortenedUrlDao {
 
     pub async fn find_by_short_code(&self, short_code: &String) -> mongodb::error::Result<Option<ModelShortenedUrl>> {
         self.collection.find_one(doc! { "short_code": short_code }, None).await
+    }
+
+    pub async fn get_all_shortened_urls(&self) -> mongodb::error::Result<Vec<ModelShortenedUrl>> {
+        self.collection.find(None, None).await?
+            .try_collect::<Vec<_>>().await
+    }
+
+    pub async fn delete_by_short_code(&self, short_code: &String) -> mongodb::error::Result<Option<ModelShortenedUrl>> {
+        self.collection.find_one_and_delete(doc! { "short_code": short_code }, None).await
     }
 }

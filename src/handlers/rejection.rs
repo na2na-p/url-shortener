@@ -8,7 +8,6 @@ pub(crate) async fn handle_rejection(err: Rejection) -> Result<impl Reply, std::
     let message;
 
     if let Some(_) = err.find::<NotFoundError>() {
-        // NotFoundErrorのチェックを追加
         code = StatusCode::NOT_FOUND;
         message = "URL not found";
     } else if let Some(_) = err.find::<InternalServerError>() {

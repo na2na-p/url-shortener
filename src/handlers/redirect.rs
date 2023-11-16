@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use chrono::Utc;
 use warp::{http::Response, http::StatusCode, reject, Rejection, Reply};
 
 use crate::dao::shortened_url_dao::ShortenedUrlDao;
@@ -14,11 +17,21 @@ pub struct InternalServerError;
 
 impl reject::Reject for InternalServerError {}
 
-// 短縮URLのリダイレクト用のハンドラー
-pub async fn redirect_short_url(shortened_url_dao: ShortenedUrlDao, short_code: String) -> Result<impl Reply, Rejection> {
+pub async fn redirect_short_url(shortened_url_dao: Arc<ShortenedUrlDao>, short_code: String) -> Result<impl Reply, Rejection> {
     match shortened_url_dao.find_by_short_code(&short_code).await {
         Ok(Some(shortened_url)) => {
-            // 対応するURLが見つかった場合、そのURLにリダイレクト
+            // 現在の時刻を取得
+            let now = Utc::now();
+
+            // 有効期限が設定されており、現在時刻が有効期限を過ぎている場合はNotFoundエラーを返す
+            if let Some(expires_at) = shortened_url.expires_at {
+                if now > expires_at {
+                    shortened_url_dao.delete_by_short_code(&short_code).await.expect("Failed to delete The Record.");
+                    return Err(reject::custom(NotFoundError));
+                }
+            }
+
+            // 有効期限内の場合、リダイレクトを実行
             Ok(Response::builder()
                 .status(StatusCode::FOUND) // 302リダイレクト
                 .header("Location", shortened_url.original_url)

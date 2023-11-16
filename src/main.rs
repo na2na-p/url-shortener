@@ -1,4 +1,5 @@
 use std::env;
+use std::sync::Arc;
 
 use juniper_warp::make_graphql_filter;
 use mongodb::Client;
@@ -17,7 +18,6 @@ mod handlers;
 mod dao;
 mod models;
 
-// カスタムリジェクションの定義
 #[derive(Debug)]
 struct InternalServerError;
 
@@ -31,22 +31,24 @@ async fn main() {
     let db = client.database("shortener");
     let collection = db.collection::<ShortenedUrl>("shortened_urls");
 
-    let dao = ShortenedUrlDao::new(collection.clone());
+    let dao = Arc::new(ShortenedUrlDao::new(collection.clone()));
 
     let schema = create_schema();
-    let context_filter = warp::any().map(move || Context {
-        db: collection.clone(),
+    let context_filter = warp::any().map({
+        let dao = dao.clone();
+        move || Context {
+            db: collection.clone(),
+            shortened_url_dao: dao.clone(),
+        }
     }).boxed();
+
     let graphql_route = warp::path("api")
         .and(warp::post())
         .and(make_graphql_filter(schema, context_filter));
 
-    // let redirect_route = warp::path!("r" / String)
-    //     .and_then(handlers::redirect::redirect_short_url);
     let redirect_route = warp::path::param()
         .and_then(move |short_code: String| {
-            let dao_clone = dao.clone();
-            redirect_short_url(dao_clone, short_code)
+            redirect_short_url(dao.clone(), short_code)
         });
 
     let routes = graphql_route.or(redirect_route).recover(handlers::rejection::handle_rejection);
