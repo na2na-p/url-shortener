@@ -1,23 +1,23 @@
-query get ($shortCode: String!) {
-    getShortenedUrl(shortCode: $shortCode) {
-        id
-        originalUrl
-        shortCode
-        expiryPeriod
-        createdAt
-        expiresAt
-    },
-}
-#query getAll {
-#    getAllShortenedUrls {
+#query get ($shortCode: String!) {
+#    getShortenedUrl(shortCode: $shortCode) {
 #        id
 #        originalUrl
 #        shortCode
 #        expiryPeriod
 #        createdAt
 #        expiresAt
-#    }
+#    },
 #}
+query getAll {
+    getAllShortenedUrls {
+        id
+        originalUrl
+        shortCode
+        expiryPeriod
+        createdAt
+        expiresAt
+    }
+}
 #mutation mut {
 #    createShortenedUrl(
 #        originalUrl: "https://www.google.co.jp",
