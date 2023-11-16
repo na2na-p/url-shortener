@@ -2,6 +2,7 @@ use std::env;
 use std::sync::Arc;
 
 use juniper_warp::make_graphql_filter;
+use log::info;
 use mongodb::Client;
 use warp::{Filter, reject};
 
@@ -26,6 +27,9 @@ impl reject::Reject for InternalServerError {}
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
+    env_logger::init();
+
+    info!("Starting server...");
     let mongo_uri = env::var("MONGODB_URI").expect("MONGODB_URI must be set");
     let client = Client::with_uri_str(&mongo_uri).await.expect("Failed to connect to MongoDB");
     let db = client.database("shortener");
