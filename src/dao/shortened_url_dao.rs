@@ -3,6 +3,7 @@ use mongodb::results::InsertOneResult;
 
 use crate::models::shortened_url::ShortenedUrl as ModelShortenedUrl;
 
+#[derive(Clone)] // Clone トレイトを追加
 pub struct ShortenedUrlDao {
     collection: Collection<ModelShortenedUrl>,
 }

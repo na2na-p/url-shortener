@@ -1,14 +1,16 @@
 use warp::{http::StatusCode, Rejection, Reply};
 
+use crate::handlers::redirect::NotFoundError;
 use crate::InternalServerError;
 
 pub(crate) async fn handle_rejection(err: Rejection) -> Result<impl Reply, std::convert::Infallible> {
     let code;
     let message;
 
-    if err.is_not_found() {
+    if let Some(_) = err.find::<NotFoundError>() {
+        // NotFoundErrorのチェックを追加
         code = StatusCode::NOT_FOUND;
-        message = "Not Found";
+        message = "URL not found";
     } else if let Some(_) = err.find::<InternalServerError>() {
         code = StatusCode::INTERNAL_SERVER_ERROR;
         message = "Internal Server Error";
